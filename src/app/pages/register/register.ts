@@ -4,10 +4,11 @@ import {MatCardModule} from '@angular/material/card';
 import {MatInputModule} from '@angular/material/input';
 import {MatIconModule} from '@angular/material/icon';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import { PasswordField } from "../../shared/components/password-field/password-field";
 
 @Component({
   selector: 'app-register',
-  imports: [MatCardModule, MatButtonModule, MatInputModule, MatFormFieldModule, MatIconModule],
+  imports: [MatCardModule, MatButtonModule, MatInputModule, MatFormFieldModule, MatIconModule, PasswordField],
   templateUrl: './register.html',
   styleUrl: './register.scss',
   encapsulation: ViewEncapsulation.None
