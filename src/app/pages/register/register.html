@@ -17,7 +17,7 @@
       </form>
     </mat-card-content>
     <mat-card-actions>
-      <button matButton="filled" class="full-width" (click)="submit()">Cadastrar</button>
+      <button matButton="filled" class="full-width" [disabled]="form.invalid" (click)="submit()">Cadastrar</button>
     </mat-card-actions>
   </mat-card>
 </div>

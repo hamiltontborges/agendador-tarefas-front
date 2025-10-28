@@ -5,18 +5,24 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { PasswordField } from '../../shared/components/password-field/password-field';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 
 @Component({
   selector: 'app-register',
   imports: [
     MatCardModule,
-    MatButtonModule,
     MatInputModule,
+    MatButtonModule,
     MatFormFieldModule,
     MatIconModule,
     PasswordField,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   templateUrl: './register.html',
   styleUrl: './register.scss',
@@ -27,9 +33,9 @@ export class Register {
 
   constructor(private formBuilder: FormBuilder) {
     this.form = this.formBuilder.group({
-      fullName: [''],
-      email: [''],
-      password: [''],
+      fullName: ['', [Validators.required, Validators.minLength(3)]],
+      email: ['', [Validators.email, Validators.required]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
 
@@ -38,8 +44,11 @@ export class Register {
   }
 
   submit() {
-    if (this.form.valid) {
-      console.log(this.form.value);
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      console.log('Form is invalid');
+      return;
     }
+    console.log('Form Submitted', this.form.value);
   }
 }
