@@ -1,9 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { NavigationEnd, Router, RouterLink } from '@angular/router';
-import { filter, Subscription } from 'rxjs';
+import { RouterLink } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { RouterState } from '../../../../core/router/router-state';
 
 @Component({
   selector: 'top-menu',
@@ -16,15 +17,12 @@ export class TopMenu implements OnInit, OnDestroy {
   actualRoute: string = '';
   subscriptionRoute!: Subscription;
 
-  constructor(private router: Router) {}
+  private routerService = inject(RouterState);
 
   ngOnInit(): void {
-    this.actualRoute = this.router.url;
-    this.subscriptionRoute = this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe((event: NavigationEnd) => {
-        this.actualRoute = event.url;
-      });
+    this.subscriptionRoute = this.routerService.actualRoute$.subscribe((route) => {
+      this.actualRoute = route;
+    });
   }
 
   ngOnDestroy(): void {
