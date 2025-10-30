@@ -16,6 +16,14 @@ export class PasswordField {
 
   @Input({ required: true }) control!: FormControl;
 
+  get passwordError(): string | null {
+    const passwordControl = this.control;
+    if (passwordControl?.hasError('required')) return 'A senha é obrigatória.';
+    if (passwordControl?.hasError('minlength'))
+      return 'A senha deve ter pelo menos 6 caracteres.';
+    return null;
+  }
+
   clickEvent(event: MouseEvent) {
     this.hide.set(!this.hide());
     event.stopPropagation();

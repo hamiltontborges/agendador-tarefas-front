@@ -7,24 +7,29 @@
       <form [formGroup]="form">
         <mat-form-field class="full-width">
           <mat-label>Nome Completo</mat-label>
-          <input matInput formControlName="fullName" placeholder="Insira seu nome completo" />
+          <input matInput formControlName="nome" placeholder="Insira seu nome completo" />
           @if (fullNameError) {
-            <mat-error>{{ fullNameError }}</mat-error>
+          <mat-error>{{ fullNameError }}</mat-error>
           }
         </mat-form-field>
         <mat-form-field class="full-width">
           <mat-label>Email</mat-label>
           <input matInput formControlName="email" placeholder="Insira seu email" />
           @if (emailError) {
-            <mat-error>{{ emailError }}</mat-error>
+          <mat-error>{{ emailError }}</mat-error>
           }
         </mat-form-field>
         <input-password-field [control]="passwordControl"></input-password-field>
       </form>
     </mat-card-content>
     <mat-card-actions>
-      <button matButton="filled" class="full-width" [disabled]="form.invalid" (click)="submit()">
-        Cadastrar
+      <button matButton="filled" class="full-width" [disabled]="form.invalid || isLoading" (click)="submit()">
+        <span class="register-btn-content">
+          {{ isLoading ? 'Cadastrando...' : 'Cadastrar' }}
+          @if (isLoading) {
+          <mat-spinner diameter="20"></mat-spinner>
+          }
+        </span>
       </button>
     </mat-card-actions>
   </mat-card>
