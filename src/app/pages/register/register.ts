@@ -12,6 +12,10 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { UserService } from '../../services/user-service';
+import { Router } from '@angular/router';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-register',
@@ -23,6 +27,7 @@ import {
     MatIconModule,
     PasswordField,
     ReactiveFormsModule,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './register.html',
   styleUrl: './register.scss',
@@ -30,23 +35,29 @@ import {
 })
 export class Register {
   form: FormGroup;
+  isLoading: boolean = false;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private userService: UserService,
+    private router: Router
+  ) {
     this.form = this.formBuilder.group({
-      fullName: ['', [Validators.required, Validators.minLength(5)]],
+      nome: ['', [Validators.required, Validators.minLength(5)]],
       email: ['', [Validators.email, Validators.required]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      senha: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
 
   get passwordControl(): FormControl {
-    return this.form.get('password') as FormControl;
+    return this.form.get('senha') as FormControl;
   }
 
   get fullNameError(): string | null {
-    const fullNameControl = this.form.get('fullName');
+    const fullNameControl = this.form.get('nome');
     if (fullNameControl?.hasError('required')) return 'O nome completo é obrigatório.';
-    if (fullNameControl?.hasError('minlength')) return 'O nome completo deve ter pelo menos 5 caracteres.';
+    if (fullNameControl?.hasError('minlength'))
+      return 'O nome completo deve ter pelo menos 5 caracteres.';
     return null;
   }
 
@@ -63,6 +74,20 @@ export class Register {
       console.log('Form is invalid');
       return;
     }
-    console.log('Form Submitted', this.form.value);
+
+    const formData = this.form.value;
+
+    this.isLoading = true;
+
+    this.userService.register(formData)
+    .pipe(finalize(() => this.isLoading = false))
+    .subscribe({
+      next: () => {
+        this.router.navigate(['/login']);
+      },
+      error: (error) => {
+        console.error('Error registering user', error);
+      }
+    });
   }
 }
