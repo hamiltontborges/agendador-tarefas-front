@@ -15,6 +15,7 @@ export class PasswordField {
   hide = signal(true);
 
   @Input({ required: true }) control!: FormControl;
+  @Input() placeholder: string = 'Insira sua senha';
 
   get passwordError(): string | null {
     const passwordControl = this.control;

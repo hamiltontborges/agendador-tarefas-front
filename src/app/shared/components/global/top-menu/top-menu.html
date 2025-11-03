@@ -12,6 +12,6 @@
 
   <span class="spacer"></span>
 
-  <button mat-button>Login</button>
+  <button mat-button routerLink="/login" [disabled]="isOnRouteLogin()">Login</button>
   <button mat-flat-button routerLink="/register" [disabled]="isOnRouteRegister()">Cadastrar-se</button>
 </mat-toolbar>

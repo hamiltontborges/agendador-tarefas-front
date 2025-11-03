@@ -13,12 +13,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { UserService } from '../../services/user-service';
+import { UserLoginPayload, UserService } from '../../services/user-service';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
+import { AuthService } from '../../services/auth-service';
 
 @Component({
-  selector: 'app-register',
+  selector: 'login',
   imports: [
     MatCardModule,
     MatInputModule,
@@ -29,36 +30,34 @@ import { finalize } from 'rxjs';
     ReactiveFormsModule,
     MatProgressSpinnerModule,
   ],
-  templateUrl: './register.html',
-  styleUrl: './register.scss',
+  templateUrl: './login.html',
+  styleUrl: './login.scss',
   encapsulation: ViewEncapsulation.None,
 })
-export class Register {
-  form: FormGroup;
+export class Login {
+  form: FormGroup<{ email: FormControl<string>; senha: FormControl<string> }>;
   isLoading: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
     this.form = this.formBuilder.group({
-      nome: ['', [Validators.required, Validators.minLength(5)]],
-      email: ['', [Validators.email, Validators.required]],
-      senha: ['', [Validators.required, Validators.minLength(6)]],
+      email: this.formBuilder.control('', {
+        validators: [Validators.email, Validators.required],
+        nonNullable: true,
+      }),
+      senha: this.formBuilder.control('', {
+        validators: [Validators.required, Validators.minLength(6)],
+        nonNullable: true,
+      }),
     });
   }
 
   get passwordControl(): FormControl {
     return this.form.get('senha') as FormControl;
-  }
-
-  get fullNameError(): string | null {
-    const fullNameControl = this.form.get('nome');
-    if (fullNameControl?.hasError('required')) return 'O nome completo é obrigatório.';
-    if (fullNameControl?.hasError('minlength'))
-      return 'O nome completo deve ter pelo menos 5 caracteres.';
-    return null;
   }
 
   get emailError(): string | null {
@@ -68,25 +67,27 @@ export class Register {
     return null;
   }
 
+  // TODO: Trocar o serviço para login
   submit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    const formData = this.form.value;
+    const formData = this.form.value as UserLoginPayload;
 
     this.isLoading = true;
 
     this.userService
-      .register(formData)
+      .login(formData)
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
-        next: () => {
-          this.router.navigate(['/login']);
+        next: (response) => {
+          this.authService.saveToken(response);
+          this.router.navigate(['/']);
         },
         error: (error) => {
-          console.error('Error registering user', error);
+          console.error('Error logging in user', error);
         },
       });
   }
