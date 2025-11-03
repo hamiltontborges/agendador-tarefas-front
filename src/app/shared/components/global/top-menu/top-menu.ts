@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs';
 import { RouterState } from '../../../../core/router/router-state';
 
 @Component({
-  selector: 'top-menu',
+  selector: 'app-top-menu',
   imports: [MatToolbarModule, MatButtonModule, MatIconModule, RouterLink],
   templateUrl: './top-menu.html',
   styleUrl: './top-menu.scss',
