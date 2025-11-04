@@ -56,6 +56,12 @@ export class Login {
     });
   }
 
+  ngOnInit(): void {
+    if (this.authService.isLoggedIn()) {
+      this.router.navigate(['/tasks']);
+    }
+  }
+
   get passwordControl(): FormControl {
     return this.form.get('senha') as FormControl;
   }
@@ -67,7 +73,6 @@ export class Login {
     return null;
   }
 
-  // TODO: Trocar o serviço para login
   submit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -84,7 +89,12 @@ export class Login {
       .subscribe({
         next: (response) => {
           this.authService.saveToken(response);
-          this.router.navigate(['/']);
+          this.userService.getUserByEmail(response).subscribe({
+            next: (user) => {
+              this.authService.saveUser(user);
+            },
+          });
+          this.router.navigate(['/tasks']);
         },
         error: (error) => {
           console.error('Error logging in user', error);
