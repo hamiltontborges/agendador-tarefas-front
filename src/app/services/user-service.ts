@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { AuthService } from './auth-service';
 
 interface UserRegisterPayload {
@@ -99,7 +99,9 @@ export class UserService {
     try {
       const decoded = this.jwtHelper.decodeToken(token);
       return decoded?.sub || null;
-    } catch (error) {
+    } catch (e) {
+      console.error('Error decoding token:', e);
+
       return null;
     }
   }
