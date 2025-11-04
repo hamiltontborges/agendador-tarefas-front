@@ -16,6 +16,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { UserService } from '../../services/user-service';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
+import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'app-register',
@@ -40,13 +41,20 @@ export class Register {
   constructor(
     private formBuilder: FormBuilder,
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
     this.form = this.formBuilder.group({
       nome: ['', [Validators.required, Validators.minLength(5)]],
       email: ['', [Validators.email, Validators.required]],
       senha: ['', [Validators.required, Validators.minLength(6)]],
     });
+  }
+
+  ngOnInit(): void {
+    if (this.authService.isLoggedIn()) {
+      this.router.navigate(['/tasks']);
+    }
   }
 
   get passwordControl(): FormControl {
